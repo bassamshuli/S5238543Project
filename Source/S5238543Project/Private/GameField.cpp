@@ -12,7 +12,7 @@ AGameField::AGameField()
 	// size of the field (3x3)
 	Size = 25;
 	// tile dimension
-	TileSize = 120.f;
+	TileSize = 100.f;
 
 
 }
