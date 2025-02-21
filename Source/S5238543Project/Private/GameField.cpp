@@ -35,7 +35,7 @@ void AGameField::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	//normalized tilepadding
-	NextCellPositionMultiplier = (TileSize + TileSize ) / TileSize; 
+	NextCellPositionMultiplier = ( TileSize + 1.3)/(TileSize); 
 }
 
 void AGameField::ResetField()
@@ -44,14 +44,14 @@ void AGameField::ResetField()
 
 void AGameField::GenerateField()
 {
-	for (int32 IndexX = 0; IndexX < Size; IndexX++)
+	for (int32 IndexX =-12; IndexX < Size-12; IndexX++)
 	{
-		for (int32 IndexY = 0; IndexY < Size; IndexY++)
+		for (int32 IndexY = -12; IndexY < Size-12; IndexY++)
 		{
 			FVector Location = AGameField::GetRelativeLocationByXYPosition(IndexX, IndexY);
 			ATileActor* Obj = GetWorld()->SpawnActor<ATileActor>(TileClass, Location, FRotator::ZeroRotator);
 			const float TileScale = TileSize / 100.f;
-			const float Zscaling = 0.2f;
+			const float Zscaling = 0.01f;
 			Obj->SetActorScale3D(FVector(TileScale, TileScale, Zscaling));
 			Obj->SetGridPosition(IndexX, IndexY);
 			TileArray.Add(Obj);
@@ -62,7 +62,7 @@ void AGameField::GenerateField()
 
 FVector2D AGameField::GetPosition(const FHitResult& Hit)
 {
-	return FVector2D();
+	return Cast<ATileActor>(Hit.GetActor())->GetGridPosition();
 }
 
 TArray<ATileActor*>& AGameField::GetTileArray()
