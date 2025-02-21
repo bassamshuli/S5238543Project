@@ -8,7 +8,7 @@
 #include "GameField.generated.h"
 
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReset);
 
 
 
@@ -18,9 +18,6 @@ class S5238543PROJECT_API AGameField : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
-	AGameField();
-
 	// keeps track of tiles
 	UPROPERTY(Transient)
 	TArray<ATileActor*> TileArray;
@@ -34,9 +31,10 @@ public:
 
 	static const int32 NOT_ASSIGNED = -1;
 
-	// tile padding percentage
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float CellPadding;
+	// BlueprintAssignable Usable with Multicast Delegates only. Exposes the property for assigning in Blueprints.
+	// declare a variable of type FOnReset (delegate)
+	UPROPERTY(BlueprintAssignable)
+	FOnReset OnResetEvent;
 
 	// size of field
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -50,12 +48,22 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATileActor> TileClass;
 
+	// tile padding percentage
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float CellPadding;
+
 	// tile size
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TileSize;
 
+	// Sets default values for this actor's properties
+	AGameField();
+
 	// Called when an instance of this class is placed (in editor) or spawned
 	virtual void OnConstruction(const FTransform& Transform) override;
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 	// remove all signs from the field
 	UFUNCTION(BlueprintCallable)
@@ -91,12 +99,8 @@ public:
 	// check if a line contains all equal elements
 	bool AllEqual(const TArray<int32>& Array) const;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-//public:	
-	// Called every frame
-	//virtual void Tick(float DeltaTime) override;
+	//public:	
+	//	// Called every frame
+	//	virtual void Tick(float DeltaTime) override;
 
 };
