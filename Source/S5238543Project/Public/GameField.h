@@ -3,8 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TileActor.h"
 #include "GameFramework/Actor.h"
 #include "GameField.generated.h"
+
+
+
+
 
 UCLASS()
 class S5238543PROJECT_API AGameField : public AActor
@@ -15,12 +20,82 @@ public:
 	// Sets default values for this actor's properties
 	AGameField();
 
+	// keeps track of tiles
+	UPROPERTY(Transient)
+	TArray<ATileActor*> TileArray;
+
+	//given a position returns a tile
+	UPROPERTY(Transient)
+	TMap<FVector2D, ATileActor*> TileMap;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float NextCellPositionMultiplier;
+
+	static const int32 NOT_ASSIGNED = -1;
+
+	// tile padding percentage
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float CellPadding;
+
+	// size of field
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Size;
+
+	// size of winning line
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 WinSize;
+
+	// TSubclassOf template class that provides UClass type safety
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ATileActor> TileClass;
+
+	// tile size
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float TileSize;
+
+	// Called when an instance of this class is placed (in editor) or spawned
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+	// remove all signs from the field
+	UFUNCTION(BlueprintCallable)
+	void ResetField();
+
+	// generate an empty game field
+	void GenerateField();
+
+	// return a (x,y) position given a hit (click) on a field tile
+	FVector2D GetPosition(const FHitResult& Hit);
+
+	// return the array of tile pointers
+	TArray<ATileActor*>& GetTileArray();
+
+	// return a relative position given (x,y) position
+	FVector GetRelativeLocationByXYPosition(const int32 InX, const int32 InY) const;
+
+	// return (x,y) position given a relative position
+	FVector2D GetXYPositionByRelativeLocation(const FVector& Location) const;
+
+	// check if a position is a win position
+	bool IsWinPosition(const FVector2D Position) const;
+
+	// check if is a win line
+	inline bool IsWinLine(const FVector2D Begin, const FVector2D End) const;
+
+	// checking if is a valid field position
+	inline bool IsValidPosition(const FVector2D Position) const;
+
+	// get a line given a begin and end positions
+	TArray<int32> GetLine(const FVector2D Begin, const FVector2D End) const;
+
+	// check if a line contains all equal elements
+	bool AllEqual(const TArray<int32>& Array) const;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+//public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	//virtual void Tick(float DeltaTime) override;
 
 };
